@@ -1,5 +1,7 @@
 <?php 
 
+
+
 get_header();
 
 while(have_posts()) {
@@ -24,6 +26,42 @@ while(have_posts()) {
 <div class="generic-content"><?php the_content(); ?></div>
 
 <?php
+      $relatedProfessors = new WP_Query(array(
+            'posts_per_page' => -1,
+            'post_type' => 'professor',
+            //'meta_key' => 'event_date',
+            'orderby' => 'title',
+            'order' => 'ASC',
+            'meta_query' => array(
+              
+              array(
+                'key' => 'related_programs', //this will filter events that belongs to the current program. ei. Math
+                'compare' => 'LIKE',
+                'value' => '"' . get_the_ID() . '"'
+              )
+            )
+          ));
+
+          //Heading for Upcoming Program ei Biology events
+          //wrap this into if statement for events w/c dont have program/related events
+          if ($relatedProfessors->have_posts()) {
+              echo '<hr class = "section-break">';
+          echo '<h2 class = "headline headline--medium">' . get_the_title() . ' Professors</h2>';
+
+          while($relatedProfessors->have_posts()) {
+            $relatedProfessors->the_post(); ?>
+              <li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></li>
+              
+      
+          <?php }
+
+          }
+          //when we run multiple queries on a single page we need to display both
+          wp_reset_postdata(); //reset the global objects
+
+
+
+      //pull in upcoming related events
         $today = date('Ymd');
           $homepageEvents = new WP_Query(array(
             'posts_per_page' => 2,
@@ -45,6 +83,12 @@ while(have_posts()) {
               )
             )
           ));
+
+          //Heading for Upcoming Program ei Biology events
+          //wrap this into if statement for events w/c dont have program/related events
+          if ($homepageEvents->have_posts()) {
+              echo '<hr class = "section-break">';
+          echo '<h2 class = "headline headline--medium">Upcoming ' . get_the_title() . ' Events</h2>';
 
           while($homepageEvents->have_posts()) {
             $homepageEvents->the_post(); ?>
@@ -69,6 +113,10 @@ while(have_posts()) {
         
 
           <?php }
+
+          }
+
+          
 
          ?>
 
