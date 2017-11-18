@@ -34,7 +34,7 @@ function university_post_types() {
 
 // CREATING A NEW POST TYPE -PROFESSOR
 	register_post_type('professor', array(
-		'supports' => array('title', 'editor'),
+		'supports' => array('title', 'editor','thumbnail'),
 		//no need for professor archive so we erase below
 		//'rewrite' => array('slug' => professors),
 		//'has_archive' => true,

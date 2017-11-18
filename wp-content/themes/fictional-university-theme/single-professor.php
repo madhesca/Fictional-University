@@ -11,6 +11,7 @@ while(have_posts()) {
       <h1 class="page-banner__title"><?php the_title();  ?></h1>
       <div class="page-banner__intro">
         <p>DONT FORGET TO REPLACE ME LATER</p>
+        <p style="color: yellow" >From single-professor</p>
       </div>
     </div>  
   </div>
@@ -18,7 +19,17 @@ while(have_posts()) {
 <div class="container container--narrow page-section"> 
 	
 
-<div class="generic-content"><?php the_content(); ?></div>
+<div class="generic-content">
+  <div class="row group">
+
+    <div class="one-third"><?php the_post_thumbnail('professorPortrait'); ?></div>
+    <div class="two-third"><?php the_content(); ?></div>
+
+
+
+  </div>
+
+</div>
 
 <!--creating a link to the events page link to program -->
 
