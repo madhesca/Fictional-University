@@ -1,6 +1,22 @@
-<?php // CREATING A NEW POST TYPE -EVENTS
+<?php 
 
 function university_post_types() {
+	// CREATING A NEW POST TYPE -CAMPUS
+	register_post_type('campus', array(
+		'supports' => array('title', 'editor', 'excerpt'),
+		'rewrite' => array('slug' => campuses),
+		'has_archive' => true,
+		'public' => true,
+		'labels' => array(
+			'name' => 'Campuses',
+			'add_new_item' => 'Add New Campus',
+			'edit_item' => 'Edit Campus',
+			'all_items' => 'All Campuses',
+			'singular_name' => 'Campus'
+		),
+		'menu_icon' => 'dashicons-location-alt'
+	));
+	// CREATING A NEW POST TYPE -EVENTS
 	register_post_type('event', array(
 		'supports' => array('title', 'editor', 'excerpt'),
 		'rewrite' => array('slug' => events),
