@@ -1,6 +1,8 @@
 <?php 
 
 get_header(); 
+//This  code below here will fix the issue of first post's banner that will retro-act to the 'All events'
+while(have_posts()) : the_post(); endwhile; rewind_posts(); //until here
 pageBanner(array(
   'title' => 'All Events',
   'subtitle' => 'See what is going on in our world.'
@@ -8,7 +10,7 @@ pageBanner(array(
 
 ?>
 
- <p style="color: red;" >From archive-event</p>
+ <p style="color: red;" >From archive-event!</p>
 
   <div class="container container--narrow page-section">
 

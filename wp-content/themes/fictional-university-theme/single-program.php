@@ -109,6 +109,7 @@ echo '<p style="color: red" >From single-program.php</p>';
           //THIS HERE WILL OUTPUT CAMPUS IF THERES ANY
 
           $relatedCampuses = get_field('related_campus');
+          
             //if THERE IS CAMPUS BEING TAG, IT WILL POST THE TITLE AND THE LINK
           if ($relatedCampuses) {
             echo '<hr class = "section-break">';

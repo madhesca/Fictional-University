@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -10538,6 +10538,117 @@ exports.default = MobileMenu;
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Search = function () {
+	//1. describe and create our object
+	function Search() {
+		_classCallCheck(this, Search);
+
+		this.resultsDiv = (0, _jquery2.default)('#search-overlay__results');
+		this.openButton = (0, _jquery2.default)('.js-search-trigger');
+		this.closeButton = (0, _jquery2.default)('.search-overlay__close');
+		this.searchOverlay = (0, _jquery2.default)('.search-overlay');
+		this.searchField = (0, _jquery2.default)('#search-term');
+		this.events();
+		this.isOverLayOpen = false;
+		this.isSpinnerVisible = false;
+		this.previousValue;
+		this.typingTimer;
+	}
+	//2. events
+
+
+	_createClass(Search, [{
+		key: 'events',
+		value: function events() {
+			this.openButton.on('click', this.openOverlay.bind(this));
+			this.closeButton.on('click', this.closeOverlay.bind(this));
+			(0, _jquery2.default)(document).on('keydown', this.keyPressDispacher.bind(this));
+			this.searchField.on('keyup', this.typingLogic.bind(this));
+		}
+
+		//3.methods (functions, actions..)
+
+		//this method is for typing in search box and output results
+
+	}, {
+		key: 'typingLogic',
+		value: function typingLogic() {
+			if (this.searchField.val() != this.previousValue) {
+				clearTimeout(this.typingTimer);
+
+				if (this.searchField.val()) {
+					if (!this.isSpinnerVisible) {
+						this.resultsDiv.html('<div class = "spinner-loader"></div>');
+						this.isSpinnerVisible = true;
+					}
+					this.typingTimer = setTimeout(this.getResults.bind(this), 2000);
+				} else {
+					this.resultsDiv.html('');
+					this.isSpinnerVisible = false;
+				}
+			}
+
+			this.previousValue = this.searchField.val();
+		}
+	}, {
+		key: 'getResults',
+		value: function getResults() {
+			this.resultsDiv.html('imagine real search result here');
+			this.isSpinnerVisible = false;
+		}
+	}, {
+		key: 'keyPressDispacher',
+		value: function keyPressDispacher(e) {
+			if (e.keyCode == 83 && !this.isOverLayOpen && !(0, _jquery2.default)('input, textarea').is(':focus')) {
+				this.openOverlay();
+			}
+
+			if (e.keyCode == 27 && this.isOverLayOpen) {
+				this.closeOverlay();
+			}
+		}
+	}, {
+		key: 'openOverlay',
+		value: function openOverlay() {
+			this.searchOverlay.addClass('search-overlay--active');
+			(0, _jquery2.default)('body').addClass('body-no-scroll');
+			this.isOverLayOpen = true;
+		}
+	}, {
+		key: 'closeOverlay',
+		value: function closeOverlay() {
+			this.searchOverlay.removeClass('search-overlay--active');
+			(0, _jquery2.default)('body').removeClass('body-no-scroll');
+			this.isOverLayOpen = false;
+		}
+	}]);
+
+	return Search;
+}();
+
+exports.default = Search;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
      _ _      _       _
  ___| (_) ___| | __  (_)___
@@ -13436,7 +13547,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13446,7 +13557,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _slickCarousel = __webpack_require__(4);
+var _slickCarousel = __webpack_require__(5);
 
 var _slickCarousel2 = _interopRequireDefault(_slickCarousel);
 
@@ -13462,16 +13573,21 @@ var _GoogleMap = __webpack_require__(1);
 
 var _GoogleMap2 = _interopRequireDefault(_GoogleMap);
 
+var _Search = __webpack_require__(4);
+
+var _Search2 = _interopRequireDefault(_Search);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Instantiate a new object using our modules/classes
-var mobileMenu = new _MobileMenu2.default();
+
 
 // Our modules / classes
 // 3rd party packages from NPM
-
+var mobileMenu = new _MobileMenu2.default();
 var heroSlider = new _HeroSlider2.default();
 var googleMap = new _GoogleMap2.default();
+var search = new _Search2.default();
 
 /***/ })
 /******/ ]);

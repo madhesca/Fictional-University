@@ -1,5 +1,5 @@
 <?php 
-
+ 
 //creating a function that is resuable for PAGE BANNERS
 function pageBanner($args = NULL) {
 	//fall back if there is no wordpress title
@@ -18,7 +18,7 @@ function pageBanner($args = NULL) {
 	}
 
 ?>
-
+<!--this is part of the pageBanner function -->
 <div class="page-banner">
       <!-- THIS WILL CREATE A DYNAMIC PAGE BANNER. 1ST, A NEW CUSTOM FIELD IS ADDED, ADDED A NEW IMAGE SIZE AT FUNCTIONS.PHP AND ADD AN IMAGE IN SINGLE.PHP -->
     <div class="page-banner__bg-image" style="background-image: url(<?php echo $args['photo']; ?>);"> </div>
