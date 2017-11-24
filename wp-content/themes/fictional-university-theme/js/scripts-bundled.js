@@ -10560,6 +10560,7 @@ var Search = function () {
 	function Search() {
 		_classCallCheck(this, Search);
 
+		this.addSearchHTML(); //this must be the 1st one here
 		this.resultsDiv = (0, _jquery2.default)('#search-overlay__results');
 		this.openButton = (0, _jquery2.default)('.js-search-trigger');
 		this.closeButton = (0, _jquery2.default)('.search-overlay__close');
@@ -10598,7 +10599,7 @@ var Search = function () {
 						this.resultsDiv.html('<div class = "spinner-loader"></div>');
 						this.isSpinnerVisible = true;
 					}
-					this.typingTimer = setTimeout(this.getResults.bind(this), 2000);
+					this.typingTimer = setTimeout(this.getResults.bind(this), 750);
 				} else {
 					this.resultsDiv.html('');
 					this.isSpinnerVisible = false;
@@ -10607,11 +10608,22 @@ var Search = function () {
 
 			this.previousValue = this.searchField.val();
 		}
+		//this gets results for the text fields from data
+
 	}, {
 		key: 'getResults',
 		value: function getResults() {
-			this.resultsDiv.html('imagine real search result here');
-			this.isSpinnerVisible = false;
+			var _this = this;
+
+			_jquery2.default.getJSON(universityData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.val(), function (posts) {
+				_jquery2.default.getJSON(universityData.root_url + '/wp-json/wp/v2/pages?search=' + _this.searchField.val(), function (pages) {
+					var combineResults = posts.concat(pages);
+					_this.resultsDiv.html('\n\t\t\t<h2 class = "search-overlay__section-title">General Information</h2>\n\t\t\t' + (combineResults.length ? '<ul class = "link-list min-list">' : '<p>No general information matches that search.</p>') + '\n\t\t\t\t' + combineResults.map(function (item) {
+						return '<li><a href = "item.link">' + item.title.rendered + '</a></li>';
+					}).join('') + '\n\t\t\t\n\t\t\t' + (combineResults.length ? '</ul>' : '') + '\n\t\t');
+					_this.isSpinnerVisible = false;
+				});
+			});
 		}
 	}, {
 		key: 'keyPressDispacher',
@@ -10624,19 +10636,39 @@ var Search = function () {
 				this.closeOverlay();
 			}
 		}
+		//it add class to acticate the overlay and control not to scroll the body
+		//and in will automatically put the focus and can type immediately
+
 	}, {
 		key: 'openOverlay',
 		value: function openOverlay() {
+			var _this2 = this;
+
 			this.searchOverlay.addClass('search-overlay--active');
 			(0, _jquery2.default)('body').addClass('body-no-scroll');
+			this.searchField.val('');
+			setTimeout(function () {
+				return _this2.searchField.focus();
+			}, 301);
 			this.isOverLayOpen = true;
 		}
+		//it delete the addtl class name to deactivate the search overlay
+
 	}, {
 		key: 'closeOverlay',
 		value: function closeOverlay() {
 			this.searchOverlay.removeClass('search-overlay--active');
 			(0, _jquery2.default)('body').removeClass('body-no-scroll');
 			this.isOverLayOpen = false;
+		}
+
+		//html for search overlay and div that holds the content of the search
+		//these were from footer.php initially
+
+	}, {
+		key: 'addSearchHTML',
+		value: function addSearchHTML() {
+			(0, _jquery2.default)('body').append('\n\t\t\n<div class="search-overlay">\n  <div class="search-overlay__top">\n    <div class="container">\n      <i class="fa fa-search search-overlay__icon" aria-hidden = "true"></i>\n      <input type="text" class="search-term" placeholder="What are you looking for?" id="search-term">\n      <i class="fa fa-window-close search-overlay__close" aria-hidden = "true"></i>\n    </div>\n  </div>\n\n\n\n<div class="container">\n  <div id="search-overlay__results"></div>\n\n</div>\n\n</div>\n\n\t');
 		}
 	}]);
 

@@ -3,6 +3,7 @@ import $ from 'jquery';
 class Search {
 	//1. describe and create our object
 	constructor() {
+		this.addSearchHTML(); //this must be the 1st one here
 		this.resultsDiv = $('#search-overlay__results');
 		this.openButton	= $('.js-search-trigger');
 		this.closeButton = $('.search-overlay__close');	
@@ -25,6 +26,7 @@ events() {
 
 
 
+
 //3.methods (functions, actions..)
 
 //this method is for typing in search box and output results
@@ -37,7 +39,7 @@ typingLogic() {
 		this.resultsDiv.html('<div class = "spinner-loader"></div>');
 		this.isSpinnerVisible = true;
 	}
-	this.typingTimer = setTimeout(this.getResults.bind(this), 2000);
+	this.typingTimer = setTimeout(this.getResults.bind(this), 750);
 	} else {
 		this.resultsDiv.html('');
 		this.isSpinnerVisible = false;
@@ -49,10 +51,22 @@ typingLogic() {
 	
 	this.previousValue = this.searchField.val();
 }
-
+//this gets results for the text fields from data
 getResults() {
-	this.resultsDiv.html('imagine real search result here');
-	this.isSpinnerVisible = false;
+	$.getJSON(universityData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.val(), posts => {
+	  $.getJSON(universityData.root_url + '/wp-json/wp/v2/pages?search=' + this.searchField.val(), pages => {
+	  	var combineResults = posts.concat(pages);
+	  	this.resultsDiv.html(`
+			<h2 class = "search-overlay__section-title">General Information</h2>
+			${combineResults.length ? '<ul class = "link-list min-list">' : '<p>No general information matches that search.</p>' }
+				${combineResults.map(item => `<li><a href = "item.link">${item.title.rendered}</a></li>`).join('')}
+			
+			${combineResults.length ? '</ul>' : ''}
+		`);
+		this.isSpinnerVisible = false;
+	  });
+	});
+	
 }
 
 
@@ -66,18 +80,48 @@ keyPressDispacher(e) {
 	}
 
 }
-
+//it add class to acticate the overlay and control not to scroll the body
+//and in will automatically put the focus and can type immediately
 openOverlay() {
 	this.searchOverlay.addClass('search-overlay--active');
 	$('body').addClass('body-no-scroll');
+	this.searchField.val('');
+	setTimeout(() => this.searchField.focus(), 301);
 	this.isOverLayOpen = true;
 }
-
+//it delete the addtl class name to deactivate the search overlay
 closeOverlay() {
 	this.searchOverlay.removeClass('search-overlay--active');
 	$('body').removeClass('body-no-scroll');
 	this.isOverLayOpen = false;
 }
+
+//html for search overlay and div that holds the content of the search
+//these were from footer.php initially
+addSearchHTML() {
+	$('body').append(`
+		
+<div class="search-overlay">
+  <div class="search-overlay__top">
+    <div class="container">
+      <i class="fa fa-search search-overlay__icon" aria-hidden = "true"></i>
+      <input type="text" class="search-term" placeholder="What are you looking for?" id="search-term">
+      <i class="fa fa-window-close search-overlay__close" aria-hidden = "true"></i>
+    </div>
+  </div>
+
+
+
+<div class="container">
+  <div id="search-overlay__results"></div>
+
+</div>
+
+</div>
+
+	`);
+}
+
 
 }
 
