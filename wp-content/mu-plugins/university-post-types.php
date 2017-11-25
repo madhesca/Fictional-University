@@ -50,6 +50,8 @@ function university_post_types() {
 
 // CREATING A NEW POST TYPE -PROFESSOR
 	register_post_type('professor', array(
+		//this is to show JSON data from posts from professor JSON
+		'show_in_rest' => true,
 		'supports' => array('title', 'editor','thumbnail'),
 		//no need for professor archive so we erase below
 		//'rewrite' => array('slug' => professors),

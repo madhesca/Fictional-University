@@ -10615,14 +10615,15 @@ var Search = function () {
 		value: function getResults() {
 			var _this = this;
 
-			_jquery2.default.getJSON(universityData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.val(), function (posts) {
-				_jquery2.default.getJSON(universityData.root_url + '/wp-json/wp/v2/pages?search=' + _this.searchField.val(), function (pages) {
-					var combineResults = posts.concat(pages);
-					_this.resultsDiv.html('\n\t\t\t<h2 class = "search-overlay__section-title">General Information</h2>\n\t\t\t' + (combineResults.length ? '<ul class = "link-list min-list">' : '<p>No general information matches that search.</p>') + '\n\t\t\t\t' + combineResults.map(function (item) {
-						return '<li><a href = "item.link">' + item.title.rendered + '</a></li>';
-					}).join('') + '\n\t\t\t\n\t\t\t' + (combineResults.length ? '</ul>' : '') + '\n\t\t');
-					_this.isSpinnerVisible = false;
-				});
+			_jquery2.default.when(_jquery2.default.getJSON(universityData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.val()), _jquery2.default.getJSON(universityData.root_url + '/wp-json/wp/v2/pages?search=' + this.searchField.val())).then(function (posts, pages) {
+				var combineResults = posts[0].concat(pages[0]);
+				_this.resultsDiv.html('\n\t\t\t<h2 class = "search-overlay__section-title">General Information</h2>\n\t\t\t' + (combineResults.length ? '<ul class = "link-list min-list">' : '<p>No general information matches that search.</p>') + '\n\t\t\t\t' + combineResults.map(function (item) {
+					return '<li><a href = "' + item.link + '">' + item.title.rendered + '</a> ' + (item.type == 'post' ? 'by ' + item.authorName : '') + '</li>';
+				}).join('') + '\n\t\t\t\n\t\t\t' + (combineResults.length ? '</ul>' : '') + '\n\t\t');
+
+				_this.isSpinnerVisible = false;
+			}, function () {
+				_this.resultsDiv.html('<p>Unexpected error. please try again</p>');
 			});
 		}
 	}, {
