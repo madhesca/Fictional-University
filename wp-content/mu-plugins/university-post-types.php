@@ -34,7 +34,7 @@ function university_post_types() {
 
 	// CREATING A NEW POST TYPE -PROGRAM
 	register_post_type('program', array(
-		'supports' => array('title', 'editor'),
+		'supports' => array('title'),
 		'rewrite' => array('slug' => programs),
 		'has_archive' => true,
 		'public' => true,

@@ -10615,15 +10615,23 @@ var Search = function () {
 		value: function getResults() {
 			var _this = this;
 
-			_jquery2.default.when(_jquery2.default.getJSON(universityData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.val()), _jquery2.default.getJSON(universityData.root_url + '/wp-json/wp/v2/pages?search=' + this.searchField.val())).then(function (posts, pages) {
-				var combineResults = posts[0].concat(pages[0]);
-				_this.resultsDiv.html('\n\t\t\t<h2 class = "search-overlay__section-title">General Information</h2>\n\t\t\t' + (combineResults.length ? '<ul class = "link-list min-list">' : '<p>No general information matches that search.</p>') + '\n\t\t\t\t' + combineResults.map(function (item) {
-					return '<li><a href = "' + item.link + '">' + item.title.rendered + '</a> ' + (item.type == 'post' ? 'by ' + item.authorName : '') + '</li>';
-				}).join('') + '\n\t\t\t\n\t\t\t' + (combineResults.length ? '</ul>' : '') + '\n\t\t');
-
+			//url that we want to send the request to
+			//once  the server response, we want to run
+			//all data from url will be passed to parameter 'results'
+			_jquery2.default.getJSON(universityData.root_url + '/wp-json/university/v1/search?term=' + this.searchField.val(), function (results) {
+				//modifying the resultsDiv that will be displayed
+				_this.resultsDiv.html('\n\t\t\t<div class = \'row\'>\n\n\n\t\t\t\t<div class = \'one-third\'>\n\t\t\t\t\t<h2 class = "search-overlay__section-title">General Information</h2>\n\t\t\t\t\t' + (results.generalInfo.length ? '<ul class = "link-list min-list">' : '<p>No general information matches that search.</p>') + '\n\t\t\t\t\t' + results.generalInfo.map(function (item) {
+					return '<li><a href = "' + item.permalink + '">' + item.title + '</a> ' + (item.postType == 'post' ? 'by ' + item.authorName : '') + '</li>';
+				}).join('') + '\n\t\t\t\t\t' + (results.generalInfo.length ? '</ul>' : '') + '\n\t\t\t\t</div>\n\n\n\t\t\t\t<div class = \'one-third\'>\n\t\t\t\t\t<h2 class = "search-overlay__section-title">Programs</h2>\n\t\t\t\t\t' + (results.programs.length ? '<ul class = "link-list min-list">' : '<p>No programs match that search. <a href = "' + universityData.root_url + '/programs">View all programs</a></p>') + '\n\t\t\t\t\t' + results.programs.map(function (item) {
+					return '<li><a href = "' + item.permalink + '">' + item.title + '</a></li>';
+				}).join('') + '\n\t\t\t\t\t' + (results.programs.length ? '</ul>' : '') + '\n\n\t\t\t\t\t<h2 class = "search-overlay__section-title">Professors</h2>\n\t\t\t\t\t' + (results.professors.length ? '<ul class = "professor-cards">' : '<p>No programs match that search.</p>') + '\n\t\t\t\t\t' + results.professors.map(function (item) {
+					return '\n\t\t\t\t\t\t<li class="professor-card__list-item">\n                \t\t<a class="professor-card" href="' + item.permalink + '">\n                    \t\t<img class="professor-card__image" src="' + item.image + '">\n                    \t\t<span class="professor-card__name">' + item.title + '</span>\n\n                \t\t</a>\n            \t\t   </li>\n\n\t\t\t\t\t\t';
+				}).join('') + '\n\t\t\t\t\t' + (results.professors.length ? '</ul>' : '') + '\n\n\t\t\t\t</div>\n\n\n\t\t\t\t<div class = \'one-third\'>\n\t\t\t\t\t<h2 class = "search-overlay__section-title">Campuses</h2>\n\t\t\t\t\t' + (results.campuses.length ? '<ul class = "link-list min-list">' : '<p>No campus matches that search.<a href = "' + universityData.root_url + '/campuses">View all campuses</a> </p>') + '\n\t\t\t\t\t' + results.campuses.map(function (item) {
+					return '<li><a href = "' + item.permalink + '">' + item.title + '</a></li>';
+				}).join('') + '\n\t\t\t\t\t' + (results.campuses.length ? '</ul>' : '') + '\n\n\t\t\t\t\t<h2 class = "search-overlay__section-title">Events</h2>\n\t\t\t\t\t\t' + (results.events.length ? '' : '<p>No event matches that search.<a href = "' + universityData.root_url + '/events">View all Events</a> </p>') + '\n\t\t\t\t\t\t' + results.events.map(function (item) {
+					return '\n\n\n\t\t<div class="event-summary">\n           <a class="event-summary__date t-center" href="' + item.permalink + '">\n            <span class="event-summary__month">' + item.month + '</span>\n            <span class="event-summary__day">' + item.day + '</span>  \n          </a>\n          <div class="event-summary__content">\n            <h5 class="event-summary__title headline headline--tiny"><a href="' + item.permalink + '">' + item.title + '</a></h5>\n            <p>' + item.description + '<a href="' + item.permalink + '" class="nu gray">Learn more</a></p>\n          </div>\n        </div>\n\n\t\t\t\t\t\t\t';
+				}).join('') + '\n\n\t\t\t\t</div>\n\n\t\t\t</div>\n\n\t\t\t');
 				_this.isSpinnerVisible = false;
-			}, function () {
-				_this.resultsDiv.html('<p>Unexpected error. please try again</p>');
 			});
 		}
 	}, {
@@ -10647,7 +10655,9 @@ var Search = function () {
 
 			this.searchOverlay.addClass('search-overlay--active');
 			(0, _jquery2.default)('body').addClass('body-no-scroll');
+			//this will empty the textfield once closed
 			this.searchField.val('');
+			//this will focus the cursor for typing immediately after 301 mseconds
 			setTimeout(function () {
 				return _this2.searchField.focus();
 			}, 301);
